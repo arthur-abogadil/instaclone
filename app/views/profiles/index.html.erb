@@ -8,7 +8,18 @@
 
   <% @users.each do |user| %>
     <p>
-      <%= link_to user.username, profile_path(user.username) %>
+
+      <%= link_to user.username, profile_path(user.username) %> | 
+      <% if User.is_my_friend? current_user.id, user.id %>
+        Friends
+      <% elsif User.request_by_me_not_accepted? current_user.id, user.id %>
+          Request Sent
+      <% elsif User.not_a_friend? current_user.id, user.id %>
+          <%= link_to "Add Friend", { controller: 'friend_request', action: 'send_request', to_id: user.id } %>
+      <% elsif User.request_to_me_not_accepted? current_user.id, user.id %>
+        <%= link_to "Accept", { controller: 'friend_request', action: 'accept_request', by_id: user.id } %>
+      <% end %>
+
     </p>
   <% end %>
 </div>
